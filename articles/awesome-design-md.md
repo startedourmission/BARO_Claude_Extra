@@ -42,14 +42,46 @@ DESIGN.md는 [Google Stitch](https://stitch.withgoogle.com/docs/design-md/overvi
 
 각 브랜드마다 `DESIGN.md` 외에 `preview.html`(라이트)과 `preview-dark.html`(다크) 미리보기도 함께 제공됩니다. 직접 열어 보고 어떤 느낌인지 확인한 뒤 선택할 수 있습니다.
 
-## 실제 DESIGN.md 생김새
+## 실제로 이걸로 만들어 보면
 
-말보다 파일을 직접 보는 것이 빠릅니다. 이 부록에 실제 DESIGN.md 두 개를 포함해 두었으니 열어 보세요. 제가 `npx getdesign@latest add claude`, `npx getdesign@latest add linear.app`로 저장소에서 직접 받은 파일입니다.
+말보다 결과를 보는 게 빠릅니다. `npx getdesign@latest add claude`와 `npx getdesign@latest add linear.app`로 받은 두 파일을 각각 LLM에게 "이 DESIGN.md 그대로 가상 제품 랜딩 페이지를 만들어 줘"라고 요청해 붙여 넣은 결과를 아래에 임베드했습니다. 둘 다 단일 HTML 파일이고 소스도 이 부록에 함께 들어 있습니다.
+
+### 데모 1 — Claude 스타일
+
+가상의 글쓰기 동반자 "Ink"를 Claude DESIGN.md로 구현한 페이지입니다. 양피지 톤 캔버스, 세리프 헤드라인, 테라코타 CTA, 따뜻한 중립 컬러.
+
+<iframe src="articles/assets/design-md-demo/claude.html"
+        width="100%" height="760"
+        style="border: 1px solid var(--rule); border-radius: 8px; margin: 12px 0;"
+        loading="lazy"
+        title="Claude DESIGN.md로 만든 Ink 데모 페이지"></iframe>
+
+[새 창에서 열기](articles/assets/design-md-demo/claude.html) · [소스 보기](articles/assets/design-md-demo/claude.html)
+
+### 데모 2 — Linear 스타일
+
+가상의 엔지니어링 속도 트래커 "Orbit"을 Linear DESIGN.md로 구현한 페이지. 근검은색(`#08090a`) 캔버스, Inter Variable weight 510, 강한 negative letter-spacing, 인디고-바이올렛 포인트.
+
+<iframe src="articles/assets/design-md-demo/linear.html"
+        width="100%" height="760"
+        style="border: 1px solid var(--rule); border-radius: 8px; margin: 12px 0;"
+        loading="lazy"
+        title="Linear DESIGN.md로 만든 Orbit 데모 페이지"></iframe>
+
+[새 창에서 열기](articles/assets/design-md-demo/linear.html) · [소스 보기](articles/assets/design-md-demo/linear.html)
+
+---
+
+두 페이지를 나란히 놓고 보면 "같은 제품 카테고리(개인 생산성 도구)여도 DESIGN.md만 바꾸면 완전히 다른 세계관이 된다"는 게 감이 옵니다. 컬러 토큰·폰트·간격·그림자가 한 번에 묶음으로 갈아끼워지니까요.
+
+## 파일 속 들여다보기
+
+어떤 규칙이 저 두 페이지를 만들어냈는지 보고 싶다면 원본 DESIGN.md를 읽어 보세요. 제가 이 부록에 전체 파일도 함께 넣어뒀습니다.
 
 - [claude.DESIGN.md 전체 파일](articles/assets/design-md/claude.DESIGN.md) (312줄)
 - [linear.DESIGN.md 전체 파일](articles/assets/design-md/linear.DESIGN.md) (367줄)
 
-어떤 톤인지 감을 잡을 수 있게, 각 파일의 앞부분을 발췌해 둡니다.
+각 파일의 앞부분을 발췌해 둡니다.
 
 ### Claude — 따뜻한 테라코타, 에디토리얼 레이아웃
 

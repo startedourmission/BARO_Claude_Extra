@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orbit — Engineering velocity, measured</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090a;
+    --panel: #0f1011;
+    --surface: #191a1b;
+    --surface-hover: #28282c;
+    --text: #f7f8f8;
+    --text-secondary: #d0d6e0;
+    --text-tertiary: #8a8f98;
+    --text-quat: #62666d;
+    --indigo: #5e6ad2;
+    --violet: #7170ff;
+    --violet-hover: #828fff;
+    --border: rgba(255,255,255,0.08);
+    --border-subtle: rgba(255,255,255,0.05);
+    --btn-ghost: rgba(255,255,255,0.03);
+    --green: #27a644;
+    --emerald: #10b981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); }
+  body {
+    color: var(--text);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    font-feature-settings: "cv01", "ss03";
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 32px; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .logo {
+    font-weight: 600; font-size: 15px;
+    letter-spacing: -0.3px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo .dot {
+    width: 10px; height: 10px; border-radius: 3px;
+    background: var(--indigo);
+  }
+  .nav-links { display: flex; gap: 24px; font-size: 13px; color: var(--text-tertiary); }
+  .nav-links a { color: inherit; text-decoration: none; transition: color 120ms; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    font-size: 12.5px; font-weight: 500;
+    color: var(--text);
+    padding: 7px 13px;
+    background: var(--btn-ghost);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    text-decoration: none;
+    transition: background 120ms;
+  }
+  .nav-cta:hover { background: rgba(255,255,255,0.06); }
+
+  .hero { padding: 96px 0 72px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 12px; margin-bottom: 32px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 12px; color: var(--text-secondary);
+  }
+  .eyebrow .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 3px rgba(39,166,68,0.2);
+  }
+  h1 {
+    font-weight: 500;
+    font-size: 62px;
+    line-height: 1.0;
+    letter-spacing: -1.35px;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+  .lead {
+    font-size: 19px;
+    color: var(--text-tertiary);
+    line-height: 1.55;
+    max-width: 540px;
+    margin-bottom: 36px;
+  }
+  .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .btn {
+    padding: 10px 18px;
+    background: var(--indigo);
+    color: var(--text);
+    font-size: 13px; font-weight: 500;
+    text-decoration: none; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: background 120ms;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn:hover { background: var(--violet-hover); }
+  .btn-ghost {
+    background: var(--btn-ghost);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+  }
+  .arrow { font-size: 14px; opacity: 0.9; }
+
+  .metrics {
+    padding: 40px 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .metric { text-align: left; }
+  .metric-value {
+    font-size: 34px; font-weight: 500;
+    letter-spacing: -0.8px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 4px;
+  }
+  .metric-value .unit {
+    color: var(--text-quat);
+    font-size: 18px; font-weight: 400;
+  }
+  .metric-label {
+    font-size: 12px; color: var(--text-tertiary);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  .features { padding: 80px 0; }
+  .features-title {
+    font-weight: 500; font-size: 38px;
+    line-height: 1.08; letter-spacing: -0.95px;
+    margin-bottom: 44px;
+    max-width: 520px;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .card {
+    background: var(--surface);
+    padding: 22px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    transition: background 120ms, border-color 120ms;
+  }
+  .card:hover {
+    background: var(--surface-hover);
+    border-color: rgba(255,255,255,0.12);
+  }
+  .card h3 {
+    font-size: 15px; font-weight: 500;
+    color: var(--text); margin-bottom: 6px;
+    letter-spacing: -0.2px;
+  }
+  .card p {
+    font-size: 13.5px;
+    color: var(--text-tertiary);
+    line-height: 1.55;
+  }
+  .card .tag {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--violet);
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    letter-spacing: 0.02em;
+  }
+
+  .log {
+    margin: 64px 0 0;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--text-tertiary);
+  }
+  .log .line { display: block; }
+  .log .t { color: var(--text-quat); margin-right: 10px; }
+  .log .ok { color: var(--emerald); }
+  .log .br { color: var(--violet); }
+  .log .id { color: var(--text); }
+
+  footer {
+    border-top: 1px solid var(--border-subtle);
+    padding: 26px 32px; text-align: center;
+    font-size: 12px; color: var(--text-quat);
+  }
+
+  @media (max-width: 560px) {
+    h1 { font-size: 40px; letter-spacing: -0.8px; }
+    .features-title { font-size: 28px; letter-spacing: -0.6px; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+  <nav>
+    <div class="logo"><span class="dot"></span>Orbit</div>
+    <div class="nav-links">
+      <a href="#">Product</a>
+      <a href="#">Changelog</a>
+      <a href="#">Docs</a>
+      <a href="#">Pricing</a>
+    </div>
+    <a href="#" class="nav-cta">Sign in</a>
+  </nav>
+
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow"><span class="pulse"></span>v2.4 · shipped Tuesday</span>
+      <h1>Engineering velocity,<br>measured.</h1>
+      <p class="lead">Orbit ties commits, PRs, and incidents to the outcomes your team actually ships. No dashboards for dashboards' sake — just the few numbers that move the work.</p>
+      <div class="actions">
+        <a href="#" class="btn">Start tracking <span class="arrow">→</span></a>
+        <a href="#" class="btn btn-ghost">Read the docs</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="metrics">
+    <div class="wrap">
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-value">4.2<span class="unit">h</span></div>
+          <div class="metric-label">Median cycle time</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">87<span class="unit">%</span></div>
+          <div class="metric-label">PRs merged &lt;1d</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">0.3<span class="unit">%</span></div>
+          <div class="metric-label">Change-failure rate</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="wrap">
+      <h2 class="features-title">Track what ships.<br>Ignore what doesn't.</h2>
+      <div class="feature-grid">
+        <div class="card">
+          <h3>Cycle time, unbundled</h3>
+          <p>See the true time from first commit to production, broken down by stage. Find the hour you lose, not the week.</p>
+          <div class="tag">dora.cycle_time</div>
+        </div>
+        <div class="card">
+          <h3>Incident correlation</h3>
+          <p>Link incidents back to the deploy that caused them. Post-mortems write themselves.</p>
+          <div class="tag">dora.cfr</div>
+        </div>
+        <div class="card">
+          <h3>PR health signals</h3>
+          <p>Stale PRs, oversized diffs, zero-review merges. Alerts in Slack, not another dashboard.</p>
+          <div class="tag">pr.signals</div>
+        </div>
+        <div class="card">
+          <h3>Team-level, not person-level</h3>
+          <p>Orbit never scores individuals. Metrics aggregate at the team so they measure process, not people.</p>
+          <div class="tag">privacy.first</div>
+        </div>
+      </div>
+
+      <div class="log">
+        <span class="line"><span class="t">14:02:18</span><span class="br">main</span> <span class="id">3f9a21c</span> cycle time recalculated · <span class="ok">ok</span></span>
+        <span class="line"><span class="t">14:02:19</span><span class="br">main</span> 18 PRs merged in window · 12 under 1d</span>
+        <span class="line"><span class="t">14:02:19</span><span class="br">release/24.4</span> deploy linked to incident INC-412</span>
+        <span class="line"><span class="t">14:02:20</span>digest ready · posted to #eng-metrics</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © Orbit · Example page styled with Linear's DESIGN.md
+  </footer>
+</body>
+</html>
