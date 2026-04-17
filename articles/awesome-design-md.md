@@ -42,6 +42,102 @@ DESIGN.md는 [Google Stitch](https://stitch.withgoogle.com/docs/design-md/overvi
 
 각 브랜드마다 `DESIGN.md` 외에 `preview.html`(라이트)과 `preview-dark.html`(다크) 미리보기도 함께 제공됩니다. 직접 열어 보고 어떤 느낌인지 확인한 뒤 선택할 수 있습니다.
 
+## 실제 DESIGN.md 생김새
+
+말보다 파일을 직접 보는 것이 빠릅니다. 이 부록에 실제 DESIGN.md 두 개를 포함해 두었으니 열어 보세요. 제가 `npx getdesign@latest add claude`, `npx getdesign@latest add linear.app`로 저장소에서 직접 받은 파일입니다.
+
+- [claude.DESIGN.md 전체 파일](articles/assets/design-md/claude.DESIGN.md) (312줄)
+- [linear.DESIGN.md 전체 파일](articles/assets/design-md/linear.DESIGN.md) (367줄)
+
+어떤 톤인지 감을 잡을 수 있게, 각 파일의 앞부분을 발췌해 둡니다.
+
+### Claude — 따뜻한 테라코타, 에디토리얼 레이아웃
+
+```markdown
+# Design System Inspired by Claude (Anthropic)
+
+## 1. Visual Theme & Atmosphere
+
+Claude's interface is a literary salon reimagined as a product page —
+warm, unhurried, and quietly intellectual. The entire experience is built
+on a parchment-toned canvas (#f5f4ed) that deliberately evokes the
+feeling of high-quality paper rather than a digital surface...
+
+**Key Characteristics:**
+- Warm parchment canvas (#f5f4ed) evoking premium paper, not screens
+- Custom Anthropic type family: Serif for headlines, Sans for UI, Mono for code
+- Terracotta brand accent (#c96442) — warm, earthy, deliberately un-tech
+- Exclusively warm-toned neutrals — every gray has a yellow-brown undertone
+- Organic, editorial illustrations replacing typical tech iconography
+- Ring-based shadow system (0px 0px 0px 1px) creating border-like depth
+- Magazine-like pacing with generous section spacing
+
+## 2. Color Palette & Roles
+
+### Primary
+- **Anthropic Near Black** (#141413): The primary text color and
+  dark-theme surface — not pure black but a warm, almost olive-tinted
+  dark that's gentler on the eyes.
+- **Terracotta Brand** (#c96442): The core brand color — a burnt
+  orange-brown used for primary CTA buttons, brand moments, and
+  the signature accent. Deliberately earthy and un-tech.
+- **Coral Accent** (#d97757): A lighter, warmer variant...
+```
+
+"따뜻하다, 느긋하다, 지적이다"로 요약되는 분위기가 첫 단락에서 그대로 전달됩니다. LLM이 이 문서를 읽으면 "에디토리얼", "warm parchment", "serif 헤드라인" 같은 단어를 놓치지 않고 반영합니다.
+
+### Linear — 어두운 캔버스 위의 정밀 공학
+
+```markdown
+# Design System Inspired by Linear
+
+## 1. Visual Theme & Atmosphere
+
+Linear's website is a masterclass in dark-mode-first product design —
+a near-black canvas (#08090a) where content emerges from darkness like
+starlight. The overall impression is one of extreme precision
+engineering: every element exists in a carefully calibrated hierarchy
+of luminance...
+
+**Key Characteristics:**
+- Dark-mode-native: #08090a marketing background, #0f1011 panel,
+  #191a1b elevated surfaces
+- Inter Variable with "cv01", "ss03" globally — geometric alternates
+- Signature weight 510 (between regular and medium) for most UI text
+- Aggressive negative letter-spacing at display sizes
+  (-1.584px at 72px, -1.056px at 48px)
+- Brand indigo-violet: #5e6ad2 (bg) / #7170ff (accent) / #828fff (hover)
+- Semi-transparent white borders: rgba(255,255,255,0.05)–0.08
+- Button backgrounds at near-zero opacity
+
+## 2. Color Palette & Roles
+
+### Background Surfaces
+- **Marketing Black** (#010102 / #08090a): The deepest background —
+  the canvas for hero sections. Near-pure black with an imperceptible
+  blue-cool undertone.
+- **Panel Dark** (#0f1011): Sidebar and panel backgrounds.
+- **Level 3 Surface** (#191a1b): Elevated surface areas,
+  card backgrounds, dropdowns.
+- **Secondary Surface** (#28282c): The lightest dark surface — hover
+  states and slightly elevated components.
+```
+
+같은 형식 안에서 완전히 다른 세계관이 드러납니다. Linear 파일은 "Weight 510", "OpenType features cv01, ss03", "-1.584px letter-spacing" 같은 **숫자로 박제된 규칙**이 많아서, LLM이 재현할 때도 정밀하게 맞춥니다.
+
+### 두 파일이 공유하는 구조
+
+형식은 동일합니다. 9개 섹션 순서도 같고, 표 형식도 같습니다. 그 위에 브랜드마다 다른 값이 채워질 뿐입니다. **같은 그릇에 다른 내용물을 담는 방식** 덕분에, LLM이 어느 브랜드의 DESIGN.md를 읽어도 같은 기대치로 해석합니다.
+
+전체 파일을 받아서 프로젝트에 떨구고 싶다면 저장소에서 직접 받는 쪽이 빠릅니다.
+
+```bash
+# CLI 한 줄로 현재 폴더에 DESIGN.md 생성
+npx --yes getdesign@latest add claude
+npx --yes getdesign@latest add linear.app
+npx --yes getdesign@latest add vercel
+```
+
 ## 어떤 브랜드들이 있나
 
 68개 브랜드가 7개 카테고리로 정리되어 있습니다. 대표적인 것만 추립니다.
