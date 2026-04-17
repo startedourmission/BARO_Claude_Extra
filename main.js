@@ -6,6 +6,8 @@ const contentEl = document.getElementById('content');
 const logoEl = document.getElementById('ascii-logo');
 
 let activeSlug = articles[0]?.slug;
+let switchId = 0;
+let currentBodyAnim = null;
 
 // ── ASCII 로고 ──
 const LOGO = `                   vlllr       1l1
@@ -51,6 +53,66 @@ articles.forEach((article, i) => {
   navInner.appendChild(btn);
 });
 
+// ── 타이핑 유틸 (DOM 텍스트 노드를 한 글자씩 드러내기) ──
+
+function collectTextNodes(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const entries = [];
+  let n;
+  while ((n = walker.nextNode())) {
+    const text = n.nodeValue;
+    if (text && text.length > 0) {
+      entries.push({ node: n, text });
+    }
+  }
+  return entries;
+}
+
+function clearEntries(entries) {
+  entries.forEach(e => { e.node.nodeValue = ''; });
+}
+
+// 타이핑 애니메이션 — 중간 취소 가능, 취소 시 전체 텍스트 즉시 복원
+function typeEntries(entries, opts = {}) {
+  const charsPerFrame = opts.charsPerFrame ?? 40;
+  const onDone = opts.onDone;
+
+  const state = {
+    entries: entries.map(e => ({ node: e.node, text: e.text, i: 0 })),
+    cancelled: false,
+    done: false,
+    idx: 0,
+  };
+
+  state.cancel = () => {
+    if (state.done) return;
+    state.cancelled = true;
+    state.entries.forEach(e => { e.node.nodeValue = e.text; });
+    state.done = true;
+  };
+
+  function tick() {
+    if (state.cancelled || state.done) return;
+    let budget = charsPerFrame;
+    while (budget > 0 && state.idx < state.entries.length) {
+      const e = state.entries[state.idx];
+      const take = Math.min(budget, e.text.length - e.i);
+      e.i += take;
+      e.node.nodeValue = e.text.slice(0, e.i);
+      budget -= take;
+      if (e.i >= e.text.length) state.idx++;
+    }
+    if (state.idx < state.entries.length) {
+      requestAnimationFrame(tick);
+    } else {
+      state.done = true;
+      if (onDone) onDone();
+    }
+  }
+  requestAnimationFrame(tick);
+  return state;
+}
+
 // ── 초기 로드 ──
 async function init() {
   contentEl.innerHTML = '';
@@ -75,15 +137,83 @@ async function init() {
     console.error(e);
   }
 
-  typeAll();
+  animateIntro();
 }
 
-// ── 글 전환 ──
-let transitioning = false;
+// ── 인트로 애니메이션 (로고 + 타이틀 + 네비 + 본문) ──
+function animateIntro() {
+  const introSlug = activeSlug;
 
+  const slow = [
+    ...document.querySelectorAll('.hero-title'),
+    ...document.querySelectorAll('.nav-pill'),
+  ];
+
+  logoEl.textContent = '';
+  const slowOrig = slow.map(el => { const t = el.textContent; el.textContent = ''; return t; });
+
+  // 본문 텍스트 노드들을 비워둔다
+  const activeBody = document.querySelector('.article.active .article-body');
+  let bodyEntries = [];
+  if (activeBody) {
+    bodyEntries = collectTextNodes(activeBody);
+    clearEntries(bodyEntries);
+  }
+
+  const SLOW_SPEED = 1;
+  const CONTENT_START = 30;
+
+  let globalI = 0;
+  let bodyStarted = false;
+
+  function tick() {
+    let chromeDone = true;
+
+    // 로고
+    if (logoEl.textContent.length < LOGO.length) {
+      logoEl.textContent = LOGO.slice(0, Math.min(LOGO.length, logoEl.textContent.length + 3));
+      chromeDone = false;
+    }
+
+    // 느린 그룹 (타이틀, 네비)
+    slow.forEach((el, idx) => {
+      const full = slowOrig[idx];
+      const delay = idx * 8;
+      const progress = Math.max(0, globalI - delay);
+      const len = Math.min(full.length, progress * SLOW_SPEED);
+      if (el.textContent.length < full.length) {
+        el.textContent = full.slice(0, len);
+        chromeDone = false;
+      }
+    });
+
+    // 본문 타이핑 시작 (CONTENT_START 프레임 이후, 한 번만)
+    // 사용자가 이미 다른 글로 전환했다면 시작하지 않는다
+    if (!bodyStarted && globalI >= CONTENT_START && bodyEntries.length > 0 && activeSlug === introSlug) {
+      bodyStarted = true;
+      currentBodyAnim = typeEntries(bodyEntries, {
+        onDone: () => { if (currentBodyAnim && currentBodyAnim.done) currentBodyAnim = null; },
+      });
+    }
+
+    globalI++;
+    if (!chromeDone) requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+}
+
+// ── 글 전환 (로딩 중·타이핑 중이어도 즉시 전환 가능) ──
 async function switchArticle(slug) {
-  if (slug === activeSlug || transitioning) return;
-  transitioning = true;
+  // 타이핑 중인 애니메이션이 있으면 먼저 중단
+  if (currentBodyAnim && !currentBodyAnim.done) {
+    currentBodyAnim.cancel();
+    currentBodyAnim = null;
+  }
+
+  if (slug === activeSlug) return;
+
+  const myId = ++switchId;
 
   // Nav 상태 변경
   document.querySelectorAll('.nav-pill').forEach(p =>
@@ -96,102 +226,28 @@ async function switchArticle(slug) {
 
   activeSlug = slug;
 
-  // 새 글 로드
   const newEl = document.getElementById(`article-${slug}`);
   const body = newEl.querySelector('.article-body');
 
+  // 로드 중에도 다른 글로 전환 가능하도록 myId 체크
+  let html;
   try {
-    const html = await loadArticle(slug);
-    body.innerHTML = html;
+    html = await loadArticle(slug);
   } catch (e) {
-    body.innerHTML = '<p>글을 불러올 수 없습니다.</p>';
+    html = '<p>글을 불러올 수 없습니다.</p>';
   }
 
+  // 로드 완료 시점에 이미 다른 글로 넘어간 경우 무시
+  if (myId !== switchId) return;
+
+  body.innerHTML = html;
   newEl.classList.add('active');
 
-  // 타이핑 애니메이션
-  typeContent(body).then(() => {
-    transitioning = false;
-  });
-}
-
-// ── 타이핑 애니메이션 ──
-function typeAll() {
-  const slow = [
-    ...document.querySelectorAll('.hero-title'),
-    ...document.querySelectorAll('.nav-pill'),
-  ];
-
-  logoEl.textContent = '';
-  const slowOrig = slow.map(el => { const t = el.textContent; el.textContent = ''; return t; });
-
-  const activeBody = document.querySelector('.article.active .article-body');
-  const bodyChildren = activeBody ? Array.from(activeBody.children) : [];
-  bodyChildren.forEach(el => { el.style.opacity = '0'; });
-
-  let globalI = 0;
-  const SLOW_SPEED = 1;
-  const CONTENT_START = 30;
-
-  function tick() {
-    let allDone = true;
-
-    // 로고
-    if (logoEl.textContent.length < LOGO.length) {
-      logoEl.textContent = LOGO.slice(0, Math.min(LOGO.length, logoEl.textContent.length + 3));
-      allDone = false;
-    }
-
-    // 느린 그룹 (타이틀, 네비)
-    slow.forEach((el, idx) => {
-      const full = slowOrig[idx];
-      const delay = idx * 8;
-      const progress = Math.max(0, globalI - delay);
-      const len = Math.min(full.length, progress * SLOW_SPEED);
-      if (el.textContent.length < full.length) {
-        el.textContent = full.slice(0, len);
-        allDone = false;
-      }
-    });
-
-    // 본문: 블록 단위 페이드인
-    if (globalI >= CONTENT_START) {
-      const p = globalI - CONTENT_START;
-      bodyChildren.forEach((el, i) => {
-        const delay = i * 4;
-        if (p >= delay && el.style.opacity === '0') {
-          el.style.transition = 'opacity 400ms ease';
-          el.style.opacity = '1';
-        }
-        if (p < delay) allDone = false;
-      });
-    } else {
-      if (bodyChildren.length > 0) allDone = false;
-    }
-
-    globalI++;
-    if (!allDone) requestAnimationFrame(tick);
-  }
-
-  requestAnimationFrame(tick);
-}
-
-function typeContent(body) {
-  const children = Array.from(body.children);
-  children.forEach(el => {
-    el.style.opacity = '0';
-    el.style.transition = 'opacity 400ms ease';
-  });
-
-  return new Promise(resolve => {
-    let i = 0;
-    function reveal() {
-      if (i >= children.length) { resolve(); return; }
-      children[i].style.opacity = '1';
-      i++;
-      setTimeout(reveal, 60);
-    }
-    setTimeout(reveal, 100);
+  // 본문 타이핑 시작
+  const entries = collectTextNodes(body);
+  clearEntries(entries);
+  currentBodyAnim = typeEntries(entries, {
+    onDone: () => { if (myId === switchId) currentBodyAnim = null; },
   });
 }
 
