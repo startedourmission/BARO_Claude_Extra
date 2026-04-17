@@ -4,4 +4,5 @@ export const articles = [
   { slug: "figma-mcp", title: "피그마 MCP로 디자인과 코드 잇기" },
   { slug: "k-skill", title: "k-skill — 한국인을 위한 스킬 모음집" },
   { slug: "karpathy-llm-wiki", title: "카파시의 LLM 위키 만들기" },
+  { slug: "awesome-design-md", title: "DESIGN.md로 프론트엔드 디자인하기" },
 ];
