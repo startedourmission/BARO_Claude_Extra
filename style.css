@@ -70,47 +70,54 @@ body {
   color: var(--muted);
 }
 
-/* ── Nav ── */
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+/* ── Layout (sidebar + content) ── */
+.layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 720px);
+  gap: 64px;
+  max-width: 1064px;
+  margin: 0 auto;
+  padding: 48px 24px 120px;
+  align-items: start;
 }
 
-.nav .wrap {
-  display: flex;
-  gap: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-  border-bottom: 1px solid var(--rule);
+.sidebar {
+  position: sticky;
+  top: 32px;
+  align-self: start;
 }
-.nav .wrap::-webkit-scrollbar { display: none; }
+
+/* ── Nav (vertical) ── */
+.nav {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--rule);
+}
 
 .nav-pill {
-  flex-shrink: 0;
-  padding: 14px 16px;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
   border: none;
   background: none;
   color: var(--muted);
-  font: 500 13px/1 "SF Mono", ui-monospace, monospace;
+  font: 500 13px/1.5 "SF Mono", ui-monospace, monospace;
   cursor: pointer;
-  white-space: nowrap;
-  border-bottom: 1.5px solid transparent;
-  margin-bottom: -1px;
-  transition: color 120ms;
+  border-left: 2px solid transparent;
+  margin-left: -1px;
+  transition: color 120ms, border-color 120ms;
 }
 
 .nav-pill:hover { color: var(--ink); }
 .nav-pill.active {
   color: var(--ink);
-  border-bottom-color: var(--ink);
+  border-left-color: var(--ink);
 }
 
 /* ── Content ── */
 .content {
-  padding: 48px 0 120px;
+  min-width: 0;
 }
 
 .loading {
@@ -242,10 +249,20 @@ body {
   font-weight: 700;
 }
 
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 32px 24px 96px;
+  }
+  .sidebar { position: static; }
+}
+
 @media (max-width: 600px) {
   .hero { padding: 64px 0 32px; }
   .hero-title { font-size: 32px; }
   .wrap { padding: 0 20px; }
+  .layout { padding: 24px 20px 80px; }
   .article-body { font-size: 15px; }
   .article-body h1 { font-size: 24px; }
   .article-body h2 { font-size: 20px; }
