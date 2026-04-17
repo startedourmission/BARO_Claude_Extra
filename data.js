@@ -6,4 +6,6 @@ export const articles = [
   { slug: "karpathy-llm-wiki", title: "카파시의 LLM 위키 만들기" },
   { slug: "awesome-design-md", title: "DESIGN.md로 프론트엔드 디자인하기" },
   { slug: "notebooklm-mcp", title: "클로드와 NotebookLM 연결하기" },
+  { slug: "skill-scripts", title: "스크립트로 에이전트 스킬 고도화하기" },
+  { slug: "gws-cli", title: "gws CLI로 구글 워크스페이스 통합 에이전트 구축하기" },
 ];
