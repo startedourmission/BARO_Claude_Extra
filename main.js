@@ -1,4 +1,4 @@
-import { articles } from './data.js';
+import { articles, categories } from './data.js';
 import { marked } from 'https://esm.sh/marked@15';
 
 const navInner = document.getElementById('nav-inner');
@@ -42,14 +42,26 @@ async function loadArticle(slug) {
   return html;
 }
 
-// ── Nav 생성 ──
-articles.forEach((article, i) => {
-  const btn = document.createElement('button');
-  btn.className = `nav-pill${i === 0 ? ' active' : ''}`;
-  btn.textContent = article.title;
-  btn.dataset.slug = article.slug;
-  btn.addEventListener('click', () => switchArticle(article.slug));
-  navInner.appendChild(btn);
+// ── Nav 생성 (카테고리별) ──
+categories.forEach(cat => {
+  const group = document.createElement('div');
+  group.className = 'nav-category';
+
+  const label = document.createElement('div');
+  label.className = 'nav-category-label';
+  label.textContent = cat.name;
+  group.appendChild(label);
+
+  cat.items.forEach(article => {
+    const btn = document.createElement('button');
+    btn.className = `nav-pill${article.slug === activeSlug ? ' active' : ''}`;
+    btn.textContent = article.title;
+    btn.dataset.slug = article.slug;
+    btn.addEventListener('click', () => switchArticle(article.slug));
+    group.appendChild(btn);
+  });
+
+  navInner.appendChild(group);
 });
 
 // ── 초기 로드 ──

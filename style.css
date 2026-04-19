@@ -87,11 +87,26 @@ body {
   align-self: start;
 }
 
-/* ── Nav (vertical) ── */
+/* ── Nav (vertical, categorized) ── */
 .nav {
   display: flex;
   flex-direction: column;
+  gap: 20px;
+}
+
+.nav-category {
+  display: flex;
+  flex-direction: column;
   border-left: 1px solid var(--rule);
+}
+
+.nav-category-label {
+  font: 600 10px/1 "SF Mono", ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 6px 16px 10px;
+  opacity: 0.75;
 }
 
 .nav-pill {
