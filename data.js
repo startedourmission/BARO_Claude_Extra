@@ -10,4 +10,5 @@ export const articles = [
   { slug: "gws-cli", title: "gws CLI로 구글 워크스페이스 통합 에이전트 구축하기" },
   { slug: "xcode-ios-claude", title: "Xcode로 아이폰 앱 개발하기" },
   { slug: "home-assistant-claude", title: "홈어시스턴트 × 클로드로 집에 음성 비서 들이기" },
+  { slug: "kakaotalk-computer-use", title: "Computer Use로 카카오톡 자동화하기" },
 ];
