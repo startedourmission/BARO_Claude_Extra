@@ -32,11 +32,61 @@ const LOGO = `                   vlllr       1l1
 // ── 마크다운 fetch & 렌더링 ──
 const cache = {};
 
+// Obsidian 이미지 임베드 문법을 웹에서 쓸 수 있게 변환
+// 지원 형태:
+//   ![[file.png]]              기본
+//   ![[file.png|Alt text]]     alt 지정
+//   ![[file.png|300]]          width 지정
+//   ![[file.png|300x200]]      width x height
+//   ![[file.png|Alt|300]]      alt + width
+//   ![[sub/file.png]]          하위 폴더
+//
+// 이미지 파일은 articles/assets/images/ 아래에 둔다 (Obsidian 첨부 폴더 컨벤션)
+const IMAGE_BASE = 'articles/assets/images/';
+
+function encodeFilePath(path) {
+  return path.split('/').map(encodeURIComponent).join('/');
+}
+
+function escapeAttr(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function preprocessObsidianImages(md) {
+  return md.replace(
+    /!\[\[([^\]|]+?)(?:\|([^\]|]+?))?(?:\|([^\]|]+?))?\]\]/g,
+    (_m, file, opt1, opt2) => {
+      const src = IMAGE_BASE + encodeFilePath(file.trim());
+
+      let alt = '';
+      let width = '';
+      let height = '';
+      for (const p of [opt1, opt2].filter(Boolean)) {
+        const t = p.trim();
+        const dim = t.match(/^(\d+)(?:x(\d+))?$/);
+        if (dim) {
+          width = dim[1];
+          if (dim[2]) height = dim[2];
+        } else {
+          alt = t;
+        }
+      }
+      const altText = alt || file.trim().split('/').pop();
+
+      let attrs = `src="${src}" alt="${escapeAttr(altText)}" loading="lazy"`;
+      if (width) attrs += ` width="${width}"`;
+      if (height) attrs += ` height="${height}"`;
+      return `<img ${attrs}>`;
+    }
+  );
+}
+
 async function loadArticle(slug) {
   if (cache[slug]) return cache[slug];
   const res = await fetch(`articles/${slug}.md`);
   if (!res.ok) throw new Error(`Failed to load ${slug}.md`);
-  const md = await res.text();
+  const raw = await res.text();
+  const md = preprocessObsidianImages(raw);
   const html = marked.parse(md);
   cache[slug] = html;
   return html;
