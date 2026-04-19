@@ -19,6 +19,7 @@ export const categories = [
   {
     name: "활용",
     items: [
+      { slug: "token-optimization", title: "클로드 토큰 절약 완전 가이드" },
       { slug: "skill-scripts", title: "스크립트로 에이전트 스킬 고도화하기" },
       { slug: "karpathy-llm-wiki", title: "카파시의 LLM 위키 만들기" },
       { slug: "figma-mcp", title: "피그마 MCP로 디자인과 코드 잇기" },
