@@ -69,12 +69,13 @@ HA 2025.2부터 [Model Context Protocol Server](https://www.home-assistant.io/in
 **Claude Code:**
 
 ```bash
-claude mcp add home-assistant -- npx -y @home-assistant/mcp-client \
-  --url https://my.homeassistant.example.com \
-  --token <YOUR_LONG_LIVED_TOKEN>
+claude mcp add home-assistant \
+  --transport http \
+  --header "Authorization: Bearer YOUR_LONG_LIVED_TOKEN" \
+  https://your.homeassistant.example.com/mcp
 ```
 
-**Claude Desktop** — 설정의 MCP 섹션에서 원격 MCP 서버로 HA URL + 토큰을 붙여 넣습니다.
+**Claude Desktop** — 설정의 MCP 섹션에서 원격 MCP 서버로 HA URL + Authorization 헤더를 입력합니다.
 
 이제 Claude 세션에서 자연어로 집을 조작할 수 있습니다. "회의 시작하려는데 주변 노이즈 될 만한 거 다 꺼줘" 같은 요청을 사무실 책상에서 던지면, Claude가 집의 로봇청소기·가습기·세탁기를 멈추게 합니다.
 

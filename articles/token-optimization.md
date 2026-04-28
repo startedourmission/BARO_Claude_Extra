@@ -442,7 +442,7 @@ CLAUDE.md → @docs/stack.md → @docs/deps.md → @package.json
 
 일주일에 한 번:
 
-1. 세션 JSON 파일 분석 (`~/Library/Application Support/ClaudeCode/sessions/`)
+1. 세션 JSONL 파일 분석 (`~/.claude/projects/<프로젝트명>/`)
 2. 토큰 많이 쓴 세션 상위 5개 열어 원인 파악
 3. 반복 패턴 발견 시 스킬화 or CLAUDE.md 반영
 

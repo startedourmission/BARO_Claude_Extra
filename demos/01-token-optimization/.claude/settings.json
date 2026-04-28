@@ -1,0 +1,13 @@
+{
+  "model": "claude-sonnet-4-6",
+  "env": {
+    "MAX_THINKING_TOKENS": "10000"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(pnpm *)",
+      "Bash(npm *)"
+    ]
+  }
+}

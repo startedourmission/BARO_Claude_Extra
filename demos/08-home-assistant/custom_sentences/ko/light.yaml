@@ -1,0 +1,17 @@
+language: "ko"
+intents:
+  HassTurnOn:
+    data:
+      - sentences:
+          - "{area} (불|조명) (켜|켜줘|켜 줘)"
+          - "{area} 조명 {brightness} 퍼센트로"
+  HassTurnOff:
+    data:
+      - sentences:
+          - "{area} (불|조명) (꺼|꺼줘|꺼 줘)"
+          - "{area} 불 꺼줘"
+  HassLightSet:
+    data:
+      - sentences:
+          - "{area} (불|조명) {color}으로"
+          - "{area} 조명 {brightness} 퍼센트"
